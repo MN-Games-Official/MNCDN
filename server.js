@@ -8,7 +8,7 @@ const app = express();
 const port = 3000;
 
 // Supabase client setup
-const supabase = createClient('YOUR_SUPABASE_URL', 'YOUR_SUPABASE_ANON_KEY');
+const supabase = createClient('https://utgmmvofnginuwvzajig.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV0Z21tdm9mbmdpbnV3dnphamlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjE5NTczMzksImV4cCI6MjAzNzUzMzMzOX0.YWH5Ceiz0OI_h8M6wG1M2UsDXM_43i5UdopmYLGO7aE');
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -28,7 +28,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   }
 
   const filePath = path.join('uploads', req.file.filename);
-  const { data, error } = await supabase.storage.from('your-bucket').upload(req.file.filename, fs.readFileSync(filePath), {
+  const { data, error } = await supabase.storage.from('mncdn').upload(req.file.filename, fs.readFileSync(filePath), {
     contentType: req.file.mimetype
   });
 
@@ -36,11 +36,11 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     return res.status(500).send(error.message);
   }
 
-  const fileUrl = supabase.storage.from('your-bucket').getPublicUrl(req.file.filename).publicURL;
+  const fileUrl = supabase.storage.from('mncdn').getPublicUrl(req.file.filename).publicURL;
 
   // Insert metadata into database
   const { data: insertData, error: insertError } = await supabase
-    .from('files')
+    .from('cdn_files')
     .insert([{ filename: req.file.filename, file_url: fileUrl }]);
 
   if (insertError) {
