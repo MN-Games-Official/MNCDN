@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple CDN</title>
+</head>
+<body>
+  <h1>Upload File</h1>
+  <form id="uploadForm">
+    <input type="file" name="file" required>
+    <button type="submit">Upload</button>
+  </form>
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(e.target);
+
+      try {
+        const response = await fetch('/upload', {
+          method: 'POST',
+          body: formData
+        });
+        const result = await response.json();
+        document.getElementById('result').innerText = `File URL: ${result.fileUrl}`;
+      } catch (error) {
+        document.getElementById('result').innerText = `Error: ${error.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
